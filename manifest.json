@@ -1,0 +1,25 @@
+{
+  "name": "省钱小助手",
+  "appid": "__UNI__SAVE_MONEY",
+  "description": "一款帮你省钱的资产记账软件",
+  "versionName": "1.0.0",
+  "versionCode": "100",
+  "transformPx": false,
+  "app-plus": {
+    "compatible": {
+      "ignoreVersion": true
+    }
+  },
+  "h5": {
+    "title": "省钱小助手",
+    "router": {
+      "mode": "hash"
+    }
+  },
+  "mp-weixin": {
+    "appid": "",
+    "setting": {
+      "urlCheck": false
+    }
+  }
+}

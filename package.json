@@ -1,0 +1,27 @@
+{
+  "name": "save-money-app",
+  "version": "1.0.0",
+  "description": "省钱小助手 - 资产记账小程序",
+  "main": "main.js",
+  "scripts": {
+    "dev:h5": "uni",
+    "build:h5": "uni build",
+    "dev:mp-weixin": "uni -p mp-weixin",
+    "build:mp-weixin": "uni build -p mp-weixin"
+  },
+  "dependencies": {
+    "@dcloudio/uni-app": "2.0.2-5000720260410001",
+    "@dcloudio/uni-h5": "2.0.2-5000720260410001",
+    "@dcloudio/uni-mp-weixin": "2.0.2-5000720260410001"
+  },
+  "devDependencies": {
+    "@dcloudio/uni-cli-i18n": "^2.0.2-5000720260410001",
+    "@dcloudio/uni-cli-shared": "2.0.2-5000720260410001",
+    "@dcloudio/uni-stacktracey": "2.0.2-5000720260410001",
+    "@dcloudio/vite-plugin-uni": "^3.0.0-alpha-3000020210521001",
+    "semver": "^7.8.5",
+    "vite": "^8.1.3",
+    "webpack": "^5.108.3",
+    "webpack-cli": "^7.1.0"
+  }
+}

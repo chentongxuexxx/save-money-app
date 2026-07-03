@@ -1,0 +1,24 @@
+# 依赖
+node_modules/
+package-lock.json
+
+# 编译产物
+unpackage/
+dist/
+
+# IDE
+.idea/
+*.swp
+*.swo
+*~
+
+# 系统
+.DS_Store
+Thumbs.db
+
+# Claude
+.claude/
+
+# 临时文件
+temp-template/
+preview.html

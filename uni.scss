@@ -1,0 +1,94 @@
+/* uni-app 全局样式系统 - 省钱小助手 */
+
+/* ========== 字体系统 ========== */
+$uni-font-size-xs: 20rpx;
+$uni-font-size-sm: 24rpx;
+$uni-font-size-base: 28rpx;
+$uni-font-size-lg: 32rpx;
+$uni-font-size-xl: 36rpx;
+$uni-font-size-xxl: 40rpx;
+
+/* 字体粗细 */
+$uni-font-weight-light: 300;
+$uni-font-weight-regular: 400;
+$uni-font-weight-medium: 500;
+$uni-font-weight-bold: 600;
+
+/* ========== 主题色 ========== */
+/* 资产库 - 绿色 */
+$color-asset: #4CAF50;
+$color-asset-light: #81C784;
+$color-asset-dark: #388E3C;
+$color-asset-bg: rgba(76, 175, 80, 0.1);
+
+/* 记账本 - 橙色 */
+$color-expense: #FF9800;
+$color-expense-light: #FFB74D;
+$color-expense-dark: #F57C00;
+$color-expense-bg: rgba(255, 152, 0, 0.1);
+
+/* 想买清单 - 蓝色 */
+$color-wish: #2196F3;
+$color-wish-light: #64B5F6;
+$color-wish-dark: #1976D2;
+$color-wish-bg: rgba(33, 150, 243, 0.1);
+
+/* 收入 - 青色 */
+$color-income: #00BCD4;
+$color-income-light: #4DD0E1;
+$color-income-dark: #0097A7;
+$color-income-bg: rgba(0, 188, 212, 0.1);
+
+/* 中性色 */
+$color-white: #FFFFFF;
+$color-black: #000000;
+$color-gray-100: #F5F5F5;
+$color-gray-200: #EEEEEE;
+$color-gray-300: #E0E0E0;
+$color-gray-400: #BDBDBD;
+$color-gray-500: #9E9E9E;
+$color-gray-600: #757575;
+$color-gray-700: #616161;
+$color-gray-800: #424242;
+$color-gray-900: #212121;
+
+/* 功能色 */
+$uni-color-primary: $color-asset;
+$uni-color-success: #4CAF50;
+$uni-color-warning: #FF9800;
+$uni-color-error: #f44336;
+$uni-color-info: #2196F3;
+
+/* ========== 间距系统 ========== */
+$uni-spacing-xs: 8rpx;
+$uni-spacing-sm: 16rpx;
+$uni-spacing-base: 20rpx;
+$uni-spacing-lg: 24rpx;
+$uni-spacing-xl: 30rpx;
+$uni-spacing-xxl: 40rpx;
+
+/* ========== 圆角系统 ========== */
+$uni-border-radius-sm: 8rpx;
+$uni-border-radius-base: 12rpx;
+$uni-border-radius-lg: 16rpx;
+$uni-border-radius-xl: 24rpx;
+$uni-border-radius-circle: 50%;
+
+/* ========== 阴影系统 ========== */
+$uni-shadow-sm: 0 2rpx 8rpx rgba(0, 0, 0, 0.06);
+$uni-shadow-base: 0 4rpx 16rpx rgba(0, 0, 0, 0.08);
+$uni-shadow-lg: 0 8rpx 24rpx rgba(0, 0, 0, 0.12);
+$uni-shadow-xl: 0 12rpx 40rpx rgba(0, 0, 0, 0.16);
+
+/* 主题色阴影 */
+$uni-shadow-asset: 0 4rpx 16rpx rgba(76, 175, 80, 0.25);
+$uni-shadow-expense: 0 4rpx 16rpx rgba(255, 152, 0, 0.25);
+$uni-shadow-wish: 0 4rpx 16rpx rgba(33, 150, 243, 0.25);
+
+/* ========== 动画系统 ========== */
+$uni-transition-base: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+$uni-transition-fast: all 0.15s ease-out;
+$uni-transition-slow: all 0.5s ease-out;
+
+/* ========== 布局 ========== */
+$uni-safe-area-bottom: env(safe-area-inset-bottom);
