@@ -1,226 +1,166 @@
 <template>
-  <view class="container">
-    <!-- 统计卡片 - 升级版 -->
-    <view class="stat-card">
-      <view class="stat-card-header">
-        <text class="stat-title">本月支出</text>
-        <view class="stat-budget" v-if="budget.isSet" :class="{ over: monthTotal > budget.monthly }">
-          <text class="budget-text">
-            {{ monthTotal > budget.monthly ? '已超预算' : '预算剩余' }}
-          </text>
-          <text class="budget-value">
-            ¥{{ (budget.monthly - monthTotal).toFixed(2) }}
-          </text>
+  <view class="pg">
+    <!-- 统计卡片 — 白底黑边框 -->
+    <view class="nx stat-card">
+      <view class="stat-top">
+        <text class="stat-lbl">本月支出</text>
+        <view class="budget-tag" v-if="budget.isSet" :class="{over:monthTotal>budget.monthly}">
+          <text>{{ monthTotal>budget.monthly?'已超预算':'预算剩余' }}</text>
+          <text class="budget-num">¥{{ Math.abs(budget.monthly-monthTotal).toFixed(0) }}</text>
         </view>
       </view>
-      <view class="stat-card-body">
-        <view class="stat-main">
-          <text class="currency">¥</text>
-          <text class="stat-value">{{ monthTotal.toFixed(2) }}</text>
-        </view>
-        <view class="budget-bar" v-if="budget.isSet">
-          <view class="budget-progress" :style="{ width: Math.min((monthTotal / budget.monthly) * 100, 100) + '%' }" :class="{ over: monthTotal > budget.monthly }"></view>
+      <text class="stat-val">¥{{ monthTotal.toFixed(2) }}</text>
+      <!-- 预算进度条 -->
+      <view class="b-track" v-if="budget.isSet">
+        <view class="b-fill" :class="{over:monthTotal>budget.monthly}" :style="{width:Math.min(monthTotal/budget.monthly*100,100)+'%'}"></view>
+      </view>
+    </view>
+
+    <!-- 今日/日均统计 -->
+    <view class="nx stat-mini">
+      <view class="mini-item">
+        <text class="mini-icon">📅</text>
+        <view class="mini-info">
+          <text class="mini-lbl">今日支出</text>
+          <text class="mini-val">¥{{ todayTotal.toFixed(2) }}</text>
         </view>
       </view>
-      <view class="stat-card-footer">
-        <view class="stat-footer-item">
-          <view class="footer-icon">📅</view>
-          <view class="footer-content">
-            <text class="footer-label">今日支出</text>
-            <text class="footer-value">¥{{ todayTotal.toFixed(2) }}</text>
-          </view>
+      <view class="mini-div"></view>
+      <view class="mini-item">
+        <text class="mini-icon">📊</text>
+        <view class="mini-info">
+          <text class="mini-lbl">日均消费</text>
+          <text class="mini-val">¥{{ avgDaily.toFixed(2) }}</text>
         </view>
-        <view class="stat-footer-divider"></view>
-        <view class="stat-footer-item">
-          <view class="footer-icon">📊</view>
-          <view class="footer-content">
-            <text class="footer-label">日均消费</text>
-            <text class="footer-value">¥{{ avgDaily.toFixed(2) }}</text>
-          </view>
-        </view>
-        <view class="stat-footer-divider"></view>
-        <view class="stat-footer-item">
-          <view class="footer-icon">📝</view>
-          <view class="footer-content">
-            <text class="footer-label">记账笔数</text>
-            <text class="footer-value">{{ expenseCount }}笔</text>
-          </view>
+      </view>
+      <view class="mini-div"></view>
+      <view class="mini-item">
+        <text class="mini-icon">📝</text>
+        <view class="mini-info">
+          <text class="mini-lbl">记账笔数</text>
+          <text class="mini-val">{{ expenseCount }}笔</text>
         </view>
       </view>
     </view>
 
-    <!-- 分类统计 - 横向进度条 -->
-    <view class="category-section">
-      <view class="section-header">
-        <text class="section-title">支出分类</text>
-        <text class="section-subtitle">Expense Breakdown</text>
-      </view>
-      <view class="category-list">
-        <view
-          v-for="item in categoryStats"
-          :key="item.category"
-          class="category-item"
-        >
-          <view class="category-info">
-            <text class="category-icon">{{ item.icon }}</text>
-            <text class="category-name">{{ item.category }}</text>
+    <!-- 分类统计 — 直角进度条 -->
+    <view class="nx cat-sec">
+      <view class="sec-h"><text class="sec-t">支出分类</text></view>
+      <view class="cat-list">
+        <view v-for="it in categoryStats" :key="it.category" class="cat-row">
+          <view class="cat-info">
+            <text class="cat-icon">{{ it.icon }}</text>
+            <text class="cat-name">{{ it.category }}</text>
           </view>
-          <view class="category-progress-wrapper">
-            <view class="category-progress">
-              <view
-                class="category-progress-bar"
-                :style="{ width: (item.amount / monthTotal * 100) + '%' }"
-              ></view>
+          <view class="cat-bar-wrap">
+            <view class="cat-bar">
+              <view class="cat-bar-fill" :style="{width:(it.amount/monthTotal*100)+'%'}"></view>
             </view>
-            <text class="category-amount">¥{{ item.amount.toFixed(0) }}</text>
+            <text class="cat-amt">¥{{ it.amount.toFixed(0) }}</text>
           </view>
         </view>
       </view>
     </view>
 
-    <!-- 支出记录列表 -->
-    <view class="expense-section">
-      <view class="section-header">
-        <text class="section-title">消费记录</text>
-        <text class="section-subtitle">Transaction History</text>
-      </view>
-      <view class="expense-list">
+    <!-- 支出记录 -->
+    <view class="nx exp-sec">
+      <view class="sec-h"><text class="sec-t">消费记录</text></view>
+      <view class="exp-list">
         <view v-for="(group, date) in groupedExpenses" :key="date" class="date-group">
-          <view class="date-header">
+          <view class="date-head">
             <view class="date-info">
-              <text class="date-text">{{ formatDateHeader(date) }}</text>
-              <text class="date-weekday">{{ getWeekday(date) }}</text>
+              <text class="date-txt">{{ formatDateHeader(date) }}</text>
+              <text class="date-wd">{{ getWeekday(date) }}</text>
             </view>
-            <view class="date-total">
-              <text class="total-label">支出</text>
-              <text class="total-value">¥{{ getDateTotal(group).toFixed(2) }}</text>
+            <view class="date-sum">
+              <text class="sum-lbl">支出</text>
+              <text class="sum-val">¥{{ getDateTotal(group).toFixed(2) }}</text>
             </view>
           </view>
-          <view
-            v-for="item in group"
-            :key="item.id"
-            class="expense-item"
-            @click="editExpense(item)"
-          >
-            <view class="expense-icon" :style="{ background: getCategoryBg(item.category) }">
+          <view v-for="item in group" :key="item.id" class="exp-item" @click="editExpense(item)">
+            <view class="exp-icon" :style="{background:catBg[item.category]||'#f3f4f6'}">
               <text>{{ getCategoryIcon(item.category) }}</text>
             </view>
-            <view class="expense-info">
-              <text class="expense-category">{{ item.category }}</text>
-              <text v-if="item.notes" class="expense-notes">{{ item.notes }}</text>
+            <view class="exp-info">
+              <text class="exp-cat">{{ item.category }}</text>
+              <text v-if="item.notes" class="exp-note">{{ item.notes }}</text>
             </view>
-            <view class="expense-right">
-              <text class="expense-amount">-¥{{ item.amount.toFixed(2) }}</text>
-              <text class="expense-time">{{ item.time || '' }}</text>
+            <view class="exp-right">
+              <text class="exp-amt">-¥{{ item.amount.toFixed(2) }}</text>
+              <text class="exp-time">{{ item.time || '' }}</text>
             </view>
           </view>
         </view>
 
-        <!-- 空状态 -->
-        <view v-if="expenses.length === 0" class="empty-state">
+        <view v-if="expenses.length===0" class="empty-state">
           <text class="empty-icon">📝</text>
-          <text class="empty-text">还没有记账记录</text>
+          <text class="empty-txt">还没有记账记录</text>
           <text class="empty-hint">点击下方按钮开始记账</text>
         </view>
       </view>
     </view>
 
-    <!-- 添加按钮 -->
-    <view class="add-btn" @click="goToAdd">
-      <view class="add-btn-inner">
-        <text class="add-icon">+</text>
-      </view>
-    </view>
+    <!-- FAB -->
+    <view class="fab" @click="goToAdd"><text class="fab-t">+</text></view>
+    <TabBar :selected="2" />
   </view>
 </template>
 
 <script>
 import StorageUtil from '@/utils/storage.js'
 import DateUtil from '@/utils/date.js'
+import TabBar from '@/components/TabBar.vue'
 
 export default {
+  components: { TabBar },
   data() {
     return {
       expenses: [],
       budget: { monthly: 3000, isSet: false },
       categories: ['餐饮', '交通', '购物', '娱乐', '住房', '医疗', '教育', '通讯', '其他'],
-      categoryIcons: {
-        '餐饮': '🍚',
-        '交通': '🚌',
-        '购物': '🛒',
-        '娱乐': '🎬',
-        '住房': '🏠',
-        '医疗': '💊',
-        '教育': '📖',
-        '通讯': '📱',
-        '其他': '📦'
-      },
-      categoryColors: {
-        '餐饮': '#FF6B6B',
-        '交通': '#4ECDC4',
-        '购物': '#45B7D1',
-        '娱乐': '#96CEB4',
-        '住房': '#FFEAA7',
-        '医疗': '#DDA0DD',
-        '教育': '#98D8C8',
-        '通讯': '#F7DC6F',
-        '其他': '#BB8FCE'
-      }
+      categoryIcons: { '餐饮': '🍚', '交通': '🚌', '购物': '🛒', '娱乐': '🎬', '住房': '🏠', '医疗': '💊', '教育': '📖', '通讯': '📱', '其他': '📦' },
+      catBg: { '餐饮': '#fef2f2', '交通': '#ecfdf5', '购物': '#eff6ff', '娱乐': '#f0fdf4', '住房': '#fefce8', '医疗': '#fdf2f8', '教育': '#f0fdfa', '通讯': '#fef9c3', '其他': '#f3f4f6' }
     }
   },
   computed: {
     todayTotal() {
-      const today = DateUtil.getToday()
-      return this.expenses
-        .filter(item => item.date === today)
-        .reduce((sum, item) => sum + item.amount, 0)
+      var t = DateUtil.getToday()
+      return this.expenses.filter(function(i) { return i.date === t }).reduce(function(s, i) { return s + i.amount }, 0)
     },
     monthTotal() {
-      const monthStart = DateUtil.getMonthStart()
-      return this.expenses
-        .filter(item => item.date >= monthStart)
-        .reduce((sum, item) => sum + item.amount, 0)
+      var ms = DateUtil.getMonthStart()
+      return this.expenses.filter(function(i) { return i.date >= ms }).reduce(function(s, i) { return s + i.amount }, 0)
     },
     expenseCount() {
-      return this.expenses.filter(item => item.date >= DateUtil.getMonthStart()).length
+      var ms = DateUtil.getMonthStart()
+      return this.expenses.filter(function(i) { return i.date >= ms }).length
     },
     avgDaily() {
-      const monthStart = DateUtil.getMonthStart()
-      const days = new Date().getDate()
-      if (days === 0) return 0
-      return this.monthTotal / days
+      var d = new Date().getDate()
+      return d === 0 ? 0 : this.monthTotal / d
     },
     groupedExpenses() {
-      const groups = {}
-      this.expenses.forEach(item => {
-        if (!groups[item.date]) {
-          groups[item.date] = []
-        }
-        groups[item.date].push(item)
+      var g = {}
+      this.expenses.forEach(function(i) {
+        if (!g[i.date]) g[i.date] = []
+        g[i.date].push(i)
       })
-      const sortedGroups = {}
-      Object.keys(groups).sort((a, b) => b.localeCompare(a)).forEach(key => {
-        sortedGroups[key] = groups[key]
+      var s = {}
+      Object.keys(g).sort(function(a, b) { return b.localeCompare(a) }).forEach(function(k) {
+        s[k] = g[k]
       })
-      return sortedGroups
+      return s
     },
     categoryStats() {
-      const monthStart = DateUtil.getMonthStart()
-      const monthExpenses = this.expenses.filter(item => item.date >= monthStart)
-      const stats = []
-      this.categories.forEach(cat => {
-        const amount = monthExpenses
-          .filter(item => item.category === cat)
-          .reduce((sum, item) => sum + item.amount, 0)
-        if (amount > 0) {
-          stats.push({
-            category: cat,
-            icon: this.categoryIcons[cat],
-            amount
-          })
-        }
+      var self = this
+      var ms = DateUtil.getMonthStart()
+      var me = this.expenses.filter(function(i) { return i.date >= ms })
+      var s = []
+      this.categories.forEach(function(c) {
+        var a = me.filter(function(i) { return i.category === c }).reduce(function(sum, i) { return sum + i.amount }, 0)
+        if (a > 0) s.push({ category: c, icon: self.categoryIcons[c], amount: a })
       })
-      return stats.sort((a, b) => b.amount - a.amount).slice(0, 5)
+      return s.sort(function(a, b) { return b.amount - a.amount }).slice(0, 5)
     }
   },
   onShow() {
@@ -230,469 +170,141 @@ export default {
   methods: {
     loadExpenses() {
       this.expenses = StorageUtil.getExpenses()
-      this.expenses.sort((a, b) => {
+      this.expenses.sort(function(a, b) {
         if (a.date !== b.date) return b.date.localeCompare(a.date)
         return b.createdAt - a.createdAt
       })
     },
     loadBudget() {
-      const budget = uni.getStorageSync('budget')
-      if (budget) {
-        this.budget = budget
-      }
+      var b = uni.getStorageSync('budget')
+      if (b) this.budget = b
     },
-    getCategoryIcon(category) {
-      return this.categoryIcons[category] || '📦'
+    getCategoryIcon(c) {
+      return this.categoryIcons[c] || '📦'
     },
-    getCategoryBg(category) {
-      const color = this.categoryColors[category] || '#BB8FCE'
-      return `linear-gradient(135deg, ${color}40 0%, ${color}20 100%)`
+    formatDateHeader(d) {
+      if (DateUtil.isToday(d)) return '今天'
+      if (DateUtil.isYesterday(d)) return '昨天'
+      return d
     },
-    formatDateHeader(date) {
-      if (DateUtil.isToday(date)) return '今天'
-      if (DateUtil.isYesterday(date)) return '昨天'
-      return date
+    getWeekday(d) {
+      return ['周日', '周一', '周二', '周三', '周四', '周五', '周六'][new Date(d).getDay()]
     },
-    getWeekday(date) {
-      const weekdays = ['周日', '周一', '周二', '周三', '周四', '周五', '周六']
-      return weekdays[new Date(date).getDay()]
-    },
-    getDateTotal(group) {
-      return group.reduce((sum, item) => sum + item.amount, 0)
+    getDateTotal(g) {
+      return g.reduce(function(s, i) { return s + i.amount }, 0)
     },
     deleteExpense(id) {
+      var self = this
       uni.showModal({
         title: '确认删除',
         content: '确定要删除这条记录吗？',
-        success: (res) => {
+        success: function(res) {
           if (res.confirm) {
-            let expenses = StorageUtil.getExpenses()
-            expenses = expenses.filter(item => item.id !== id)
-            StorageUtil.setExpenses(expenses)
-            this.loadExpenses()
+            var e = StorageUtil.getExpenses()
+            e = e.filter(function(i) { return i.id !== id })
+            StorageUtil.setExpenses(e)
+            self.loadExpenses()
             uni.showToast({ title: '删除成功', icon: 'success' })
           }
         }
       })
     },
     editExpense(item) {
+      var self = this
       uni.showActionSheet({
         itemList: ['编辑', '删除'],
-        success: (res) => {
+        success: function(res) {
           if (res.tapIndex === 0) {
-            uni.navigateTo({
-              url: `/pages/add-expense/add-expense?id=${item.id}`
-            })
+            uni.navigateTo({ url: '/pages/add-expense/add-expense?id=' + item.id })
           } else if (res.tapIndex === 1) {
-            this.deleteExpense(item.id)
+            self.deleteExpense(item.id)
           }
         }
       })
     },
     goToAdd() {
-      uni.navigateTo({
-        url: '/pages/add-expense/add-expense'
-      })
+      uni.navigateTo({ url: '/pages/add-expense/add-expense' })
     }
   }
 }
 </script>
 
 <style scoped lang="scss">
-.container {
-  padding: 20rpx;
-  padding-bottom: 140rpx;
-  background: #F5F6FA;
-  min-height: 100vh;
-}
+$bd:#000;$fg:#111;$ac:#eab308;$mu:#6b7280;
+
+.pg{min-height:100vh;background:#fff;padding:20rpx;padding-bottom:140rpx}
+
+/* 通用卡片 */
+.nx{background:#fff;border:2px solid $bd;padding:24rpx;box-shadow:3px 3px 0 rgba(0,0,0,1);margin-bottom:20rpx}
 
 /* 统计卡片 */
-.stat-card {
-  background: linear-gradient(135deg, #FF9800 0%, #F57C00 100%);
-  border-radius: 32rpx;
-  padding: 32rpx;
-  margin-bottom: 24rpx;
-  box-shadow: 0 12rpx 40rpx rgba(255, 152, 0, 0.3);
-  color: #fff;
-}
+.stat-lbl{font-size:24rpx;color:$mu;text-transform:uppercase;letter-spacing:0.08em}
+.stat-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:8rpx}
+.stat-val{font-size:72rpx;font-weight:700;color:$fg;display:block;margin:8rpx 0 16rpx}
 
-.stat-card-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 16rpx;
-}
+/* 预算标签 */
+.budget-tag{display:flex;align-items:center;gap:8rpx;background:$surface;padding:6rpx 14rpx;border:2px solid $bd;box-shadow:1px 1px 0 $bd;font-size:20rpx}
+.budget-tag.over{background:$fg;color:#fff}
+.budget-num{font-weight:600;font-size:22rpx}
 
-.stat-title {
-  font-size: 28rpx;
-  font-weight: 500;
-  opacity: 0.9;
-}
+/* 预算进度条 */
+.b-track{height:12rpx;background:#e5e5e5;border:1px solid $bd;margin-top:4rpx}
+.b-fill{height:100%;background:$fg;transition:width .5s}
+.b-fill.over{box-shadow:2px 2px 0 #dc2626}
 
-.stat-budget {
-  background: rgba(255, 255, 255, 0.2);
-  padding: 8rpx 16rpx;
-  border-radius: 12rpx;
+/* 迷你统计 */
+.stat-mini{display:flex;align-items:center}
+.mini-item{flex:1;display:flex;align-items:center;gap:12rpx}
+.mini-icon{font-size:36rpx}
+.mini-info{display:flex;flex-direction:column}
+.mini-lbl{font-size:20rpx;color:$mu}
+.mini-val{font-size:26rpx;font-weight:600}
+.mini-div{width:1rpx;height:40rpx;background:#e5e5e5;margin:0 12rpx}
 
-  &.over {
-    background: rgba(244, 67, 54, 0.8);
-  }
-}
-
-.budget-text {
-  font-size: 20rpx;
-  opacity: 0.9;
-  margin-right: 8rpx;
-}
-
-.budget-value {
-  font-size: 24rpx;
-  font-weight: 600;
-}
-
-.stat-card-body {
-  margin-bottom: 24rpx;
-}
-
-.stat-main {
-  display: flex;
-  align-items: baseline;
-}
-
-.currency {
-  font-size: 32rpx;
-  font-weight: 500;
-  margin-right: 8rpx;
-}
-
-.stat-value {
-  font-size: 72rpx;
-  font-weight: 700;
-  letter-spacing: -2rpx;
-}
-
-.budget-bar {
-  height: 12rpx;
-  background: rgba(255, 255, 255, 0.2);
-  border-radius: 6rpx;
-  margin-top: 20rpx;
-  overflow: hidden;
-}
-
-.budget-progress {
-  height: 100%;
-  background: #fff;
-  border-radius: 6rpx;
-  transition: width 0.5s ease;
-
-  &.over {
-    background: #f44336;
-  }
-}
-
-.stat-card-footer {
-  display: flex;
-  align-items: center;
-  background: rgba(255, 255, 255, 0.15);
-  border-radius: 20rpx;
-  padding: 20rpx;
-}
-
-.stat-footer-item {
-  flex: 1;
-  display: flex;
-  align-items: center;
-}
-
-.footer-icon {
-  font-size: 36rpx;
-  margin-right: 12rpx;
-}
-
-.footer-content {
-  display: flex;
-  flex-direction: column;
-}
-
-.footer-label {
-  font-size: 20rpx;
-  opacity: 0.7;
-}
-
-.footer-value {
-  font-size: 26rpx;
-  font-weight: 600;
-}
-
-.stat-footer-divider {
-  width: 1rpx;
-  height: 40rpx;
-  background: rgba(255, 255, 255, 0.3);
-  margin: 0 12rpx;
-}
+/* 区块标题 */
+.sec-h{margin-bottom:20rpx}
+.sec-t{font-size:26rpx;font-weight:600;letter-spacing:0.04em;text-transform:uppercase}
 
 /* 分类统计 */
-.category-section {
-  background: #fff;
-  border-radius: 24rpx;
-  padding: 24rpx;
-  margin-bottom: 24rpx;
-  box-shadow: 0 4rpx 20rpx rgba(0, 0, 0, 0.04);
-}
+.cat-list{display:flex;flex-direction:column;gap:18rpx}
+.cat-row{display:flex;align-items:center}
+.cat-info{display:flex;align-items:center;width:150rpx;flex-shrink:0;gap:8rpx}
+.cat-icon{font-size:28rpx}
+.cat-name{font-size:24rpx;color:$mu}
+.cat-bar-wrap{flex:1;display:flex;align-items:center;gap:12rpx}
+.cat-bar{flex:1;height:14rpx;background:#e5e5e5;border:1px solid $bd}
+.cat-bar-fill{height:100%;background:$fg;transition:width .5s}
+.cat-amt{font-size:24rpx;color:$fg;font-weight:600;width:80rpx;text-align:right}
 
-.section-header {
-  display: flex;
-  align-items: baseline;
-  margin-bottom: 20rpx;
-}
+/* 支出列表 */
+.exp-list{margin-top:8rpx}
+.date-group{margin-bottom:20rpx}
+.date-head{display:flex;justify-content:space-between;align-items:center;padding:14rpx 0;border-bottom:2px solid $bd}
+.date-info{display:flex;align-items:baseline;gap:10rpx}
+.date-txt{font-size:28rpx;color:$fg;font-weight:600}
+.date-wd{font-size:22rpx;color:$mu}
+.date-sum{display:flex;align-items:baseline;gap:6rpx}
+.sum-lbl{font-size:22rpx;color:$mu}
+.sum-val{font-size:26rpx;color:$fg;font-weight:600}
 
-.section-title {
-  font-size: 30rpx;
-  font-weight: 600;
-  color: #333;
-}
-
-.section-subtitle {
-  font-size: 22rpx;
-  color: #bbb;
-  margin-left: 12rpx;
-}
-
-.category-list {
-  display: flex;
-  flex-direction: column;
-  gap: 20rpx;
-}
-
-.category-item {
-  display: flex;
-  align-items: center;
-}
-
-.category-info {
-  display: flex;
-  align-items: center;
-  width: 160rpx;
-  flex-shrink: 0;
-}
-
-.category-icon {
-  font-size: 32rpx;
-  margin-right: 8rpx;
-}
-
-.category-name {
-  font-size: 24rpx;
-  color: #666;
-}
-
-.category-progress-wrapper {
-  flex: 1;
-  display: flex;
-  align-items: center;
-  gap: 12rpx;
-}
-
-.category-progress {
-  flex: 1;
-  height: 16rpx;
-  background: #f5f5f5;
-  border-radius: 8rpx;
-  overflow: hidden;
-}
-
-.category-progress-bar {
-  height: 100%;
-  background: linear-gradient(90deg, #FF9800 0%, #FFB74D 100%);
-  border-radius: 8rpx;
-  transition: width 0.5s ease;
-}
-
-.category-amount {
-  font-size: 24rpx;
-  color: #333;
-  font-weight: 600;
-  width: 80rpx;
-  text-align: right;
-}
-
-/* 支出记录 */
-.expense-section {
-  background: #fff;
-  border-radius: 24rpx;
-  padding: 24rpx;
-  box-shadow: 0 4rpx 20rpx rgba(0, 0, 0, 0.04);
-}
-
-.expense-list {
-  margin-top: 8rpx;
-}
-
-.date-group {
-  margin-bottom: 24rpx;
-}
-
-.date-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 16rpx 0;
-}
-
-.date-info {
-  display: flex;
-  align-items: baseline;
-}
-
-.date-text {
-  font-size: 28rpx;
-  color: #333;
-  font-weight: 600;
-}
-
-.date-weekday {
-  font-size: 22rpx;
-  color: #999;
-  margin-left: 12rpx;
-}
-
-.date-total {
-  display: flex;
-  align-items: baseline;
-}
-
-.total-label {
-  font-size: 22rpx;
-  color: #999;
-  margin-right: 8rpx;
-}
-
-.total-value {
-  font-size: 28rpx;
-  color: #FF9800;
-  font-weight: 600;
-}
-
-.expense-item {
-  display: flex;
-  align-items: center;
-  padding: 20rpx;
-  margin-bottom: 12rpx;
-  background: #fafafa;
-  border-radius: 16rpx;
-  transition: all 0.2s ease;
-
-  &:active {
-    background: #f5f5f5;
-    transform: scale(0.99);
-  }
-}
-
-.expense-icon {
-  width: 80rpx;
-  height: 80rpx;
-  border-radius: 20rpx;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 40rpx;
-  margin-right: 20rpx;
-}
-
-.expense-info {
-  flex: 1;
-  min-width: 0;
-}
-
-.expense-category {
-  display: block;
-  font-size: 28rpx;
-  color: #333;
-  font-weight: 500;
-}
-
-.expense-notes {
-  display: block;
-  font-size: 22rpx;
-  color: #999;
-  margin-top: 4rpx;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.expense-right {
-  text-align: right;
-  flex-shrink: 0;
-}
-
-.expense-amount {
-  display: block;
-  font-size: 30rpx;
-  color: #f44336;
-  font-weight: 600;
-}
-
-.expense-time {
-  display: block;
-  font-size: 20rpx;
-  color: #bbb;
-  margin-top: 4rpx;
-}
+.exp-item{display:flex;align-items:center;padding:18rpx 12rpx;border-bottom:1px solid rgba(0,0,0,0.06);transition:background .15s}
+.exp-item:active{background:rgba(0,0,0,0.03)}
+.exp-icon{width:72rpx;height:72rpx;display:flex;align-items:center;justify-content:center;font-size:34rpx;border:2px solid $bd;margin-right:16rpx}
+.exp-info{flex:1;min-width:0}
+.exp-cat{display:block;font-size:28rpx;color:$fg;font-weight:500}
+.exp-note{display:block;font-size:22rpx;color:$mu;margin-top:4rpx;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.exp-right{text-align:right;flex-shrink:0}
+.exp-amt{display:block;font-size:28rpx;color:#dc2626;font-weight:600}
+.exp-time{display:block;font-size:20rpx;color:$mu;margin-top:4rpx}
 
 /* 空状态 */
-.empty-state {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding: 60rpx 40rpx;
-}
+.empty-state{display:flex;flex-direction:column;align-items:center;padding:60rpx 40rpx}
+.empty-icon{font-size:100rpx;margin-bottom:20rpx}
+.empty-txt{font-size:28rpx;color:$fg;font-weight:500;margin-bottom:8rpx}
+.empty-hint{font-size:24rpx;color:$mu}
 
-.empty-icon {
-  font-size: 120rpx;
-  margin-bottom: 24rpx;
-}
-
-.empty-text {
-  font-size: 30rpx;
-  color: #333;
-  font-weight: 500;
-  margin-bottom: 12rpx;
-}
-
-.empty-hint {
-  font-size: 24rpx;
-  color: #999;
-}
-
-/* 添加按钮 */
-.add-btn {
-  position: fixed;
-  right: 32rpx;
-  bottom: 60rpx;
-  z-index: 100;
-}
-
-.add-btn-inner {
-  width: 112rpx;
-  height: 112rpx;
-  background: linear-gradient(135deg, #FF9800 0%, #F57C00 100%);
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  box-shadow: 0 12rpx 32rpx rgba(255, 152, 0, 0.4);
-  transition: all 0.3s ease;
-
-  &:active {
-    transform: scale(0.92);
-  }
-}
-
-.add-icon {
-  color: #fff;
-  font-size: 56rpx;
-  font-weight: 300;
-  line-height: 1;
-}
+/* FAB */
+.fab{position:fixed;right:32rpx;bottom:140rpx;z-index:100;width:96rpx;height:96rpx;background:$ac;border:2px solid $bd;box-shadow:3px 3px 0 rgba(0,0,0,1);display:flex;align-items:center;justify-content:center;transition:all .1s}
+.fab-t{font-size:48rpx;font-weight:700}
+.fab:active{box-shadow:none;transform:translate(3px,3px)}
 </style>

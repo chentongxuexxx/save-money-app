@@ -1,94 +1,149 @@
-/* uni-app 全局样式系统 - 省钱小助手 */
+/* Neo-Brutalism 设计系统 — 省钱小助手 (vaultr-notes 风格) */
 
-/* ========== 字体系统 ========== */
-$uni-font-size-xs: 20rpx;
-$uni-font-size-sm: 24rpx;
-$uni-font-size-base: 28rpx;
-$uni-font-size-lg: 32rpx;
-$uni-font-size-xl: 36rpx;
-$uni-font-size-xxl: 40rpx;
+/* 颜色令牌 */
+$bg: #ffffff;
+$fg: #111111;
+$surface: #f5f5f5;
+$surface-soft: #f8f9fa;
+$accent: #eab308;
+$accent-hov: #ca9f07;
+$accent-rgb: 234, 179, 8;
+$muted: #6b7280;
+$muted-soft: #898989;
+$card-bd: #000000;
+$hr: #333333;
+$hairline: rgba(17, 17, 17, 0.13);
 
-/* 字体粗细 */
-$uni-font-weight-light: 300;
-$uni-font-weight-regular: 400;
-$uni-font-weight-medium: 500;
-$uni-font-weight-bold: 600;
+/* 像素阴影 — 100% 不透明纯黑，零模糊 */
+$px-shadow: rgba(0, 0, 0, 1);
+$px-d0: 1px 1px 0;
+$px-d1: 2px 2px 0;
+$px-d2: 3px 3px 0;
+$px-d3: 4px 4px 0;
 
-/* ========== 主题色 ========== */
-/* 资产库 - 绿色 */
-$color-asset: #4CAF50;
-$color-asset-light: #81C784;
-$color-asset-dark: #388E3C;
-$color-asset-bg: rgba(76, 175, 80, 0.1);
+/* 功能性颜色 */
+$danger: #dc2626;
+$success: #16a34a;
+$p0: #22d3ee;
+$p1: #f472b6;
+$p2: #a78bfa;
+$p3: #34d399;
 
-/* 记账本 - 橙色 */
-$color-expense: #FF9800;
-$color-expense-light: #FFB74D;
-$color-expense-dark: #F57C00;
-$color-expense-bg: rgba(255, 152, 0, 0.1);
+/* 交互 token */
+$icon-hov: rgba(0, 0, 0, 0.06);
+$card-hov: rgba(0, 0, 0, 0.03);
+$nav-act: rgba(0, 0, 0, 0.1);
 
-/* 想买清单 - 蓝色 */
-$color-wish: #2196F3;
-$color-wish-light: #64B5F6;
-$color-wish-dark: #1976D2;
-$color-wish-bg: rgba(33, 150, 243, 0.1);
+/* 间距 */
+$sp-xxs: 4px;
+$sp-xs: 8px;
+$sp-sm: 12px;
+$sp-md: 16px;
+$sp-lg: 24px;
 
-/* 收入 - 青色 */
-$color-income: #00BCD4;
-$color-income-light: #4DD0E1;
-$color-income-dark: #0097A7;
-$color-income-bg: rgba(0, 188, 212, 0.1);
+/* 字体大小 */
+$text-xs: 24rpx;
+$text-sm: 26rpx;
+$text-base: 28rpx;
+$text-body: 32rpx;
 
-/* 中性色 */
-$color-white: #FFFFFF;
-$color-black: #000000;
-$color-gray-100: #F5F5F5;
-$color-gray-200: #EEEEEE;
-$color-gray-300: #E0E0E0;
-$color-gray-400: #BDBDBD;
-$color-gray-500: #9E9E9E;
-$color-gray-600: #757575;
-$color-gray-700: #616161;
-$color-gray-800: #424242;
-$color-gray-900: #212121;
+/* 组件尺寸 */
+$btn-h: 80rpx;
+$btn-h-sm: 72rpx;
+$card-note-h: 192rpx;
 
-/* 功能色 */
-$uni-color-primary: $color-asset;
-$uni-color-success: #4CAF50;
-$uni-color-warning: #FF9800;
-$uni-color-error: #f44336;
-$uni-color-info: #2196F3;
+/* ===== Neo-Brutalism 通用 Mixin ===== */
 
-/* ========== 间距系统 ========== */
-$uni-spacing-xs: 8rpx;
-$uni-spacing-sm: 16rpx;
-$uni-spacing-base: 20rpx;
-$uni-spacing-lg: 24rpx;
-$uni-spacing-xl: 30rpx;
-$uni-spacing-xxl: 40rpx;
+/* 卡片 — 白底 + 2px 黑边框 + d2 硬阴影 */
+@mixin neo-card {
+  background: #fff;
+  border: 2px solid $card-bd;
+  padding: 24rpx;
+  box-shadow: $px-d2 $px-shadow;
+  border-radius: 0;
+}
 
-/* ========== 圆角系统 ========== */
-$uni-border-radius-sm: 8rpx;
-$uni-border-radius-base: 12rpx;
-$uni-border-radius-lg: 16rpx;
-$uni-border-radius-xl: 24rpx;
-$uni-border-radius-circle: 50%;
+/* 主按钮 — 黄色填充 + 黑边框 + d2 阴影 */
+@mixin neo-btn-primary {
+  background: $accent;
+  color: $fg;
+  border: 2px solid $card-bd;
+  box-shadow: $px-d2 $px-shadow;
+  border-radius: 0;
+  font-weight: 600;
+  transition: all 0.1s;
+  &:active {
+    box-shadow: none;
+    transform: translate(3px, 3px);
+  }
+}
 
-/* ========== 阴影系统 ========== */
-$uni-shadow-sm: 0 2rpx 8rpx rgba(0, 0, 0, 0.06);
-$uni-shadow-base: 0 4rpx 16rpx rgba(0, 0, 0, 0.08);
-$uni-shadow-lg: 0 8rpx 24rpx rgba(0, 0, 0, 0.12);
-$uni-shadow-xl: 0 12rpx 40rpx rgba(0, 0, 0, 0.16);
+/* 次按钮 — 白底 + 黑边框 + d2 阴影 */
+@mixin neo-btn-secondary {
+  background: #fff;
+  color: $fg;
+  border: 2px solid $card-bd;
+  box-shadow: $px-d2 $px-shadow;
+  border-radius: 0;
+  font-weight: 600;
+  transition: all 0.1s;
+  &:active {
+    box-shadow: none;
+    transform: translate(3px, 3px);
+  }
+}
 
-/* 主题色阴影 */
-$uni-shadow-asset: 0 4rpx 16rpx rgba(76, 175, 80, 0.25);
-$uni-shadow-expense: 0 4rpx 16rpx rgba(255, 152, 0, 0.25);
-$uni-shadow-wish: 0 4rpx 16rpx rgba(33, 150, 243, 0.25);
+/* 小 chip 按钮 — 白底 + 黑边框 + d1 阴影 */
+@mixin neo-chip {
+  background: #fff;
+  border: 2px solid $card-bd;
+  box-shadow: $px-d1 $px-shadow;
+  border-radius: 0;
+  transition: all 0.1s;
+  &:active {
+    box-shadow: none;
+    transform: translate(2px, 2px);
+  }
+}
 
-/* ========== 动画系统 ========== */
-$uni-transition-base: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-$uni-transition-fast: all 0.15s ease-out;
-$uni-transition-slow: all 0.5s ease-out;
+/* 输入框 — 白底 + 2px 黑边框 + d2 阴影 */
+@mixin neo-input {
+  background: #fff;
+  border: 2px solid $card-bd;
+  box-shadow: $px-d2 $px-shadow;
+  border-radius: 0;
+  padding: 16rpx;
+  font-size: $text-base;
+  color: $fg;
+}
 
-/* ========== 布局 ========== */
-$uni-safe-area-bottom: env(safe-area-inset-bottom);
+/* 黄色顶栏 */
+@mixin neo-nav {
+  background: $accent;
+  border-bottom: 2px solid $card-bd;
+}
+
+/* FAB 悬浮按钮 */
+@mixin neo-fab {
+  position: fixed;
+  right: 32rpx;
+  bottom: 60rpx;
+  z-index: 100;
+  width: 96rpx;
+  height: 96rpx;
+  background: $accent;
+  border: 2px solid $card-bd;
+  box-shadow: $px-d2 $px-shadow;
+  border-radius: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 48rpx;
+  font-weight: 700;
+  color: $fg;
+  transition: all 0.1s;
+  &:active {
+    box-shadow: none;
+    transform: translate(3px, 3px);
+  }
+}

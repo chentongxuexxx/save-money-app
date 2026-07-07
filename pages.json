@@ -4,7 +4,7 @@
 			"path": "pages/home/home",
 			"style": {
 				"navigationBarTitleText": "省钱小助手",
-				"navigationBarBackgroundColor": "#4CAF50",
+				"navigationBarBackgroundColor": "#eab308",
 				"navigationBarTextStyle": "white",
 				"navigationStyle": "custom"
 			}
@@ -13,7 +13,7 @@
 			"path": "pages/assets/assets",
 			"style": {
 				"navigationBarTitleText": "资产库",
-				"navigationBarBackgroundColor": "#4CAF50",
+				"navigationBarBackgroundColor": "#eab308",
 				"navigationBarTextStyle": "white"
 			}
 		},
@@ -21,7 +21,7 @@
 			"path": "pages/expense/expense",
 			"style": {
 				"navigationBarTitleText": "记账本",
-				"navigationBarBackgroundColor": "#FF9800",
+				"navigationBarBackgroundColor": "#eab308",
 				"navigationBarTextStyle": "white"
 			}
 		},
@@ -29,7 +29,7 @@
 			"path": "pages/wishlist/wishlist",
 			"style": {
 				"navigationBarTitleText": "想买清单",
-				"navigationBarBackgroundColor": "#2196F3",
+				"navigationBarBackgroundColor": "#eab308",
 				"navigationBarTextStyle": "white"
 			}
 		},
@@ -37,7 +37,7 @@
 			"path": "pages/profile/profile",
 			"style": {
 				"navigationBarTitleText": "我的",
-				"navigationBarBackgroundColor": "#9C27B0",
+				"navigationBarBackgroundColor": "#eab308",
 				"navigationBarTextStyle": "white"
 			}
 		},
@@ -45,7 +45,7 @@
 			"path": "pages/add-asset/add-asset",
 			"style": {
 				"navigationBarTitleText": "添加资产",
-				"navigationBarBackgroundColor": "#4CAF50",
+				"navigationBarBackgroundColor": "#eab308",
 				"navigationBarTextStyle": "white"
 			}
 		},
@@ -53,7 +53,7 @@
 			"path": "pages/add-expense/add-expense",
 			"style": {
 				"navigationBarTitleText": "记一笔",
-				"navigationBarBackgroundColor": "#FF9800",
+				"navigationBarBackgroundColor": "#eab308",
 				"navigationBarTextStyle": "white"
 			}
 		},
@@ -61,7 +61,7 @@
 			"path": "pages/add-wish/add-wish",
 			"style": {
 				"navigationBarTitleText": "添加想买",
-				"navigationBarBackgroundColor": "#2196F3",
+				"navigationBarBackgroundColor": "#eab308",
 				"navigationBarTextStyle": "white"
 			}
 		}
@@ -69,37 +69,26 @@
 	"globalStyle": {
 		"navigationBarTextStyle": "white",
 		"navigationBarTitleText": "省钱小助手",
-		"navigationBarBackgroundColor": "#4CAF50",
-		"backgroundColor": "#F8F8F8"
+		"navigationBarBackgroundColor": "#eab308",
+		"backgroundColor": "#ffffff"
 	},
 	"tabBar": {
-		"color": "#999999",
-		"selectedColor": "#4CAF50",
-		"borderStyle": "white",
-		"backgroundColor": "#FFFFFF",
+		"custom": true,
 		"list": [
 			{
 				"pagePath": "pages/home/home",
-				"iconPath": "static/home.png",
-				"selectedIconPath": "static/home-active.png",
 				"text": "首页"
 			},
 			{
 				"pagePath": "pages/assets/assets",
-				"iconPath": "static/asset.png",
-				"selectedIconPath": "static/asset-active.png",
 				"text": "资产"
 			},
 			{
 				"pagePath": "pages/expense/expense",
-				"iconPath": "static/expense.png",
-				"selectedIconPath": "static/expense-active.png",
 				"text": "记账"
 			},
 			{
 				"pagePath": "pages/wishlist/wishlist",
-				"iconPath": "static/wish.png",
-				"selectedIconPath": "static/wish-active.png",
 				"text": "想买"
 			}
 		]

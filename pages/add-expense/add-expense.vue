@@ -1,64 +1,44 @@
 <template>
-  <view class="container">
-    <!-- 类型切换 -->
-    <view class="type-switch">
-      <view
-        class="switch-item"
-        :class="{ active: type === 'expense' }"
-        @click="switchType('expense')"
-      >
-        <text class="switch-icon">💸</text>
-        <text class="switch-text">支出</text>
+  <view class="pg">
+    <!-- 类型切换 — segmented control -->
+    <view class="type-seg">
+      <view class="seg-item" :class="{on:type==='expense'}" @click="switchType('expense')">
+        <text class="seg-icon">💸</text>
+        <text class="seg-txt">支出</text>
       </view>
-      <view
-        class="switch-item"
-        :class="{ active: type === 'income' }"
-        @click="switchType('income')"
-      >
-        <text class="switch-icon">💰</text>
-        <text class="switch-text">收入</text>
+      <view class="seg-item" :class="{on:type==='income'}" @click="switchType('income')">
+        <text class="seg-icon">💰</text>
+        <text class="seg-txt">收入</text>
       </view>
     </view>
 
     <!-- 金额输入 -->
-    <view class="amount-section">
-      <view class="amount-label">{{ type === 'expense' ? '支出金额' : '收入金额' }}</view>
-      <view class="amount-input-wrapper">
+    <view class="amount-sec">
+      <text class="amt-lbl">{{ type==='expense'?'支出金额':'收入金额' }}</text>
+      <view class="amt-input-wrap">
         <text class="currency">¥</text>
-        <input
-          v-model.number="form.amount"
-          class="amount-input"
-          type="digit"
-          placeholder="0.00"
-          focus
-        />
+        <input v-model.number="form.amount" class="amt-input" type="digit" placeholder="0.00" focus />
       </view>
     </view>
 
     <!-- 表单 -->
-    <view class="form">
+    <view class="nx form-card">
       <!-- 分类 -->
-      <view class="form-item">
-        <text class="label">{{ type === 'expense' ? '支出分类' : '收入分类' }}</text>
-        <view class="category-grid">
-          <view
-            v-for="item in categories"
-            :key="item"
-            class="category-item"
-            :class="{ active: form.category === item }"
-            @click="selectCategory(item)"
-          >
-            <text class="cat-icon">{{ type === 'expense' ? categoryIcons[item] : incomeCategoryIcons[item] }}</text>
+      <view class="form-row">
+        <text class="label">{{ type==='expense'?'支出分类':'收入分类' }}</text>
+        <view class="cat-grid">
+          <view v-for="item in categories" :key="item" class="cat-cell" :class="{on:form.category===item}" @click="selectCategory(item)">
+            <text class="cat-icon">{{ type==='expense'?categoryIcons[item]:incomeCategoryIcons[item] }}</text>
             <text class="cat-name">{{ item }}</text>
           </view>
         </view>
       </view>
 
       <!-- 日期 -->
-      <view class="form-item">
+      <view class="form-row">
         <text class="label">日期</text>
         <picker mode="date" :value="form.date" @change="onDateChange">
-          <view class="picker">
+          <view class="picker-row">
             <text>{{ form.date || '请选择日期' }}</text>
             <text class="arrow">›</text>
           </view>
@@ -66,35 +46,23 @@
       </view>
 
       <!-- 备注 -->
-      <view class="form-item">
+      <view class="form-row last">
         <text class="label">备注</text>
-        <textarea
-          v-model="form.notes"
-          class="textarea"
-          placeholder="请输入备注信息（选填）"
-          auto-height
-        />
+        <textarea v-model="form.notes" class="textarea" placeholder="请输入备注信息（选填）" auto-height />
       </view>
     </view>
 
     <!-- 快捷金额 -->
-    <view class="quick-amount">
-      <text class="quick-title">快捷金额</text>
+    <view class="nx quick-sec">
+      <text class="quick-lbl">快捷金额</text>
       <view class="quick-list">
-        <view
-          v-for="amount in quickAmounts"
-          :key="amount"
-          class="quick-item"
-          @click="setAmount(amount)"
-        >
-          ¥{{ amount }}
-        </view>
+        <view v-for="a in quickAmounts" :key="a" class="quick-chip" @click="setAmount(a)">¥{{ a }}</view>
       </view>
     </view>
 
-    <!-- 保存按钮 -->
+    <!-- 保存 -->
     <button class="save-btn" :class="type" @click="saveRecord">
-      {{ type === 'expense' ? '记一笔' : '记收入' }}
+      {{ type==='expense'?'记一笔':'记收入' }}
     </button>
   </view>
 </template>
@@ -109,38 +77,10 @@ export default {
       type: 'expense',
       expenseCategories: ['餐饮', '交通', '购物', '娱乐', '住房', '医疗', '教育', '通讯', '其他'],
       incomeCategories: ['工资', '奖金', '兼职', '理财', '红包', '退款', '其他'],
-      categoryIcons: {
-        '餐饮': '🍚',
-        '交通': '🚌',
-        '购物': '🛒',
-        '娱乐': '🎬',
-        '住房': '🏠',
-        '医疗': '💊',
-        '教育': '📖',
-        '通讯': '📱',
-        '其他': '📦'
-      },
-      incomeCategoryIcons: {
-        '工资': '💼',
-        '奖金': '🎁',
-        '兼职': '💪',
-        '理财': '📈',
-        '红包': '🧧',
-        '退款': '↩️',
-        '其他': '💵'
-      },
+      categoryIcons: { '餐饮': '🍚', '交通': '🚌', '购物': '🛒', '娱乐': '🎬', '住房': '🏠', '医疗': '💊', '教育': '📖', '通讯': '📱', '其他': '📦' },
+      incomeCategoryIcons: { '工资': '💼', '奖金': '🎁', '兼职': '💪', '理财': '📈', '红包': '🧧', '退款': '↩️', '其他': '💵' },
       quickAmounts: [5, 10, 20, 30, 50, 100, 200, 500],
-      form: {
-        amount: '',
-        category: '',
-        date: DateUtil.getToday(),
-        notes: ''
-      }
-    }
-  },
-  onLoad(options) {
-    if (options && options.type === 'income') {
-      this.type = 'income'
+      form: { amount: '', category: '', date: DateUtil.getToday(), notes: '' }
     }
   },
   computed: {
@@ -148,22 +88,26 @@ export default {
       return this.type === 'expense' ? this.expenseCategories : this.incomeCategories
     }
   },
+  onLoad(options) {
+    if (options && options.type === 'income') {
+      this.type = 'income'
+    }
+  },
   methods: {
-    switchType(type) {
-      this.type = type
+    switchType(t) {
+      this.type = t
       this.form.category = ''
     },
-    selectCategory(category) {
-      this.form.category = category
+    selectCategory(c) {
+      this.form.category = c
     },
     onDateChange(e) {
       this.form.date = e.detail.value
     },
-    setAmount(amount) {
-      this.form.amount = amount
+    setAmount(a) {
+      this.form.amount = a
     },
     saveRecord() {
-      // 表单验证
       if (!this.form.amount || this.form.amount <= 0) {
         uni.showToast({ title: '请输入有效金额', icon: 'none' })
         return
@@ -176,42 +120,33 @@ export default {
         uni.showToast({ title: '请选择日期', icon: 'none' })
         return
       }
-
-      const now = Date.now()
-
+      var n = Date.now()
       if (this.type === 'expense') {
-        // 保存支出
-        const expenses = StorageUtil.getExpenses()
-        const newRecord = {
+        var expenses = StorageUtil.getExpenses()
+        expenses.push({
           id: StorageUtil.generateId(),
           amount: this.form.amount,
           category: this.form.category,
           date: this.form.date,
           notes: this.form.notes,
-          createdAt: now
-        }
-        expenses.push(newRecord)
+          createdAt: n
+        })
         StorageUtil.setExpenses(expenses)
-
         uni.showToast({ title: '记账成功', icon: 'success' })
       } else {
-        // 保存收入
-        const incomes = StorageUtil.getIncomes()
-        const newRecord = {
+        var incomes = StorageUtil.getIncomes()
+        incomes.push({
           id: StorageUtil.generateId(),
           amount: this.form.amount,
           category: this.form.category,
           date: this.form.date,
           notes: this.form.notes,
-          createdAt: now
-        }
-        incomes.push(newRecord)
+          createdAt: n
+        })
         StorageUtil.setIncomes(incomes)
-
         uni.showToast({ title: '记收入成功', icon: 'success' })
       }
-
-      setTimeout(() => {
+      setTimeout(function() {
         uni.navigateBack()
       }, 1500)
     }
@@ -220,246 +155,59 @@ export default {
 </script>
 
 <style scoped lang="scss">
-.container {
-  padding: 30rpx;
-  min-height: 100vh;
-  background: linear-gradient(180deg, #fafafa 0%, #fff 100%);
-}
+$bd:#000;$fg:#111;$ac:#eab308;$mu:#6b7280;
 
-/* 类型切换 */
-.type-switch {
-  display: flex;
-  background: #f5f5f5;
-  border-radius: 16rpx;
-  padding: 8rpx;
-  margin-bottom: 40rpx;
-}
+.pg{min-height:100vh;background:#fff;padding:30rpx}
 
-.switch-item {
-  flex: 1;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 20rpx;
-  border-radius: 12rpx;
-  transition: all 0.3s ease;
+/* 通用卡片 */
+.nx{background:#fff;border:2px solid $bd;padding:24rpx;box-shadow:3px 3px 0 rgba(0,0,0,1)}
 
-  &.active {
-    background: #fff;
-    box-shadow: 0 4rpx 16rpx rgba(0, 0, 0, 0.08);
+/* Segmented Control — 切换控件 */
+.type-seg{display:flex;border:2px solid $bd;margin-bottom:36rpx}
+.seg-item{flex:1;display:flex;align-items:center;justify-content:center;padding:20rpx;gap:10rpx;background:#fff;transition:all .15s;cursor:pointer}
+.seg-item:first-child{border-right:2px solid $bd}
+.seg-item.on{background:$fg;color:#fff}
+.seg-icon{font-size:32rpx}
+.seg-txt{font-size:28rpx;font-weight:500}
+.seg-item.on .seg-txt{color:#fff}
 
-    &.switch-item:first-child .switch-text {
-      color: #FF9800;
-    }
+/* 金额 */
+.amount-sec{text-align:center;margin-bottom:36rpx}
+.amt-lbl{font-size:26rpx;color:$mu;margin-bottom:14rpx;display:block}
+.amt-input-wrap{display:flex;align-items:baseline;justify-content:center}
+.currency{font-size:48rpx;font-weight:500;color:$fg;margin-right:8rpx}
+.amt-input{font-size:80rpx;font-weight:700;color:$fg;text-align:center;width:400rpx}
 
-    &.switch-item:last-child .switch-text {
-      color: #4CAF50;
-    }
-  }
-}
-
-.switch-icon {
-  font-size: 36rpx;
-  margin-right: 12rpx;
-}
-
-.switch-text {
-  font-size: 28rpx;
-  color: #999;
-  font-weight: 500;
-}
-
-/* 金额输入 */
-.amount-section {
-  text-align: center;
-  margin-bottom: 40rpx;
-}
-
-.amount-label {
-  font-size: 26rpx;
-  color: #999;
-  margin-bottom: 16rpx;
-}
-
-.amount-input-wrapper {
-  display: flex;
-  align-items: baseline;
-  justify-content: center;
-}
-
-.currency {
-  font-size: 48rpx;
-  font-weight: 500;
-  color: #333;
-  margin-right: 8rpx;
-}
-
-.amount-input {
-  font-size: 80rpx;
-  font-weight: 700;
-  color: #333;
-  text-align: center;
-  width: 400rpx;
-}
-
-/* 表单 */
-.form {
-  background: #fff;
-  border-radius: 24rpx;
-  padding: 8rpx 24rpx;
-  box-shadow: 0 4rpx 20rpx rgba(0, 0, 0, 0.04);
-}
-
-.form-item {
-  padding: 28rpx 0;
-  border-bottom: 1rpx solid #f5f5f5;
-}
-
-.form-item:last-child {
-  border-bottom: none;
-}
-
-.label {
-  display: block;
-  font-size: 28rpx;
-  color: #333;
-  font-weight: 500;
-  margin-bottom: 20rpx;
-}
+/* 表单卡片 */
+.form-card{margin-bottom:24rpx}
+.form-row{padding:26rpx 0;border-bottom:1px solid rgba(0,0,0,0.08)}
+.form-row.last{border-bottom:none}
+.label{display:block;font-size:28rpx;color:$fg;font-weight:500;margin-bottom:18rpx}
 
 /* 分类网格 */
-.category-grid {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 16rpx;
-}
+.cat-grid{display:flex;flex-wrap:wrap;gap:14rpx}
+.cat-cell{display:flex;flex-direction:column;align-items:center;justify-content:center;width:130rpx;height:110rpx;background:$surface;border:2px solid transparent;transition:all .15s;cursor:pointer}
+.cat-cell.on{background:#fefce8;border-color:$bd;box-shadow:2px 2px 0 $bd}
+.cat-icon{font-size:38rpx;margin-bottom:6rpx}
+.cat-name{font-size:22rpx;color:$mu}
+.cat-cell.on .cat-name{color:$fg;font-weight:500}
 
-.category-item {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  width: 140rpx;
-  height: 120rpx;
-  background: #f9f9f9;
-  border-radius: 16rpx;
-  border: 2rpx solid transparent;
-  transition: all 0.3s ease;
-
-  &.active {
-    background: #fff3e0;
-    border-color: #FF9800;
-    box-shadow: 0 4rpx 16rpx rgba(255, 152, 0, 0.2);
-  }
-}
-
-.category-item:last-child {
-  .cat-name {
-    color: #4CAF50;
-  }
-}
-
-.cat-icon {
-  font-size: 40rpx;
-  margin-bottom: 8rpx;
-}
-
-.cat-name {
-  font-size: 22rpx;
-  color: #666;
-}
-
-.category-item.active .cat-name {
-  color: #FF9800;
-  font-weight: 500;
-}
-
-/* 日期选择 */
-.picker {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  font-size: 30rpx;
-  color: #333;
-  padding: 16rpx 0;
-}
-
-.arrow {
-  color: #ccc;
-  font-size: 36rpx;
-}
+/* 日期 */
+.picker-row{display:flex;justify-content:space-between;align-items:center;font-size:30rpx;color:$fg;padding:14rpx 0}
+.arrow{color:$mu;font-size:34rpx}
 
 /* 备注 */
-.textarea {
-  font-size: 28rpx;
-  color: #333;
-  width: 100%;
-  min-height: 100rpx;
-  padding: 20rpx;
-  background: #f9f9f9;
-  border-radius: 12rpx;
-}
+.textarea{font-size:28rpx;color:$fg;width:100%;min-height:100rpx;padding:20rpx;background:$surface;border:2px solid $bd}
 
 /* 快捷金额 */
-.quick-amount {
-  margin-top: 30rpx;
-  background: #fff;
-  border-radius: 20rpx;
-  padding: 24rpx;
-  box-shadow: 0 4rpx 16rpx rgba(0, 0, 0, 0.04);
-}
-
-.quick-title {
-  font-size: 26rpx;
-  color: #999;
-  margin-bottom: 20rpx;
-  display: block;
-}
-
-.quick-list {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 16rpx;
-}
-
-.quick-item {
-  width: 140rpx;
-  height: 70rpx;
-  background: #f5f5f5;
-  border-radius: 12rpx;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 26rpx;
-  color: #666;
-  transition: all 0.2s ease;
-
-  &:active {
-    background: #eee;
-    transform: scale(0.95);
-  }
-}
+.quick-sec{margin-bottom:36rpx}
+.quick-lbl{font-size:26rpx;color:$mu;margin-bottom:18rpx;display:block}
+.quick-list{display:flex;flex-wrap:wrap;gap:14rpx}
+.quick-chip{width:130rpx;height:64rpx;display:flex;align-items:center;justify-content:center;font-size:24rpx;color:$fg;background:#fff;border:2px solid $bd;box-shadow:2px 2px 0 $bd;font-weight:500;transition:all .1s}
+.quick-chip:active{box-shadow:none;transform:translate(2px,2px)}
 
 /* 保存按钮 */
-.save-btn {
-  margin-top: 40rpx;
-  height: 96rpx;
-  line-height: 96rpx;
-  background: linear-gradient(135deg, #FF9800 0%, #f57c00 100%);
-  color: #fff;
-  border-radius: 48rpx;
-  font-size: 32rpx;
-  font-weight: 600;
-  border: none;
-  box-shadow: 0 8rpx 24rpx rgba(255, 152, 0, 0.3);
-
-  &.income {
-    background: linear-gradient(135deg, #4CAF50 0%, #388E3C 100%);
-    box-shadow: 0 8rpx 24rpx rgba(76, 175, 80, 0.3);
-  }
-
-  &:active {
-    transform: scale(0.98);
-  }
-}
+.save-btn{margin-top:8rpx;height:96rpx;line-height:96rpx;font-size:32rpx;font-weight:600;border:2px solid $bd;box-shadow:3px 3px 0 rgba(0,0,0,1);background:$ac;color:$fg;transition:all .1s;border-radius:0}
+.save-btn:active{box-shadow:none;transform:translate(3px,3px)}
+.save-btn.income{background:$fg;color:#fff}
 </style>
